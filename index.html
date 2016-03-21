@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    <meta charset="UTF-8">
+    <title>Web-platform-tests by YOTOV-LIMITED</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" type="text/css" href="stylesheets/normalize.css" media="screen">
+    <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,700' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" type="text/css" href="stylesheets/stylesheet.css" media="screen">
+    <link rel="stylesheet" type="text/css" href="stylesheets/github-light.css" media="screen">
+  </head>
+  <body>
+    <section class="page-header">
+      <h1 class="project-name">Web-platform-tests</h1>
+      <h2 class="project-tagline">Test Suites for Web Platform specifications</h2>
+      <a href="https://github.com/YOTOV-LIMITED/web-platform-tests" class="btn">View on GitHub</a>
+      <a href="https://github.com/YOTOV-LIMITED/web-platform-tests/zipball/master" class="btn">Download .zip</a>
+      <a href="https://github.com/YOTOV-LIMITED/web-platform-tests/tarball/master" class="btn">Download .tar.gz</a>
+    </section>
+
+    <section class="main-content">
+      <h1>
+<a id="the-web-platform-tests-project-" class="anchor" href="#the-web-platform-tests-project-" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>The Web Platform Tests Project <a href="http://irc.w3.org/?channels=testing"><img src="https://goo.gl/6nCIks" alt="IRC chat"></a>
+</h1>
+
+<p>The Web Platform Tests Project is a W3C-coordinated attempt to build a
+cross-browser testsuite for the Web-platform stack. Writing tests in a
+way that allows them to be run in all browsers gives browser projects
+confidence that they are shipping software that is compatible with other
+implementations, and that later implementations will be compatible with
+their implementations. This in turn gives Web authors/developers
+confidence that they can actually rely on the Web platform to deliver on
+the promise of working across browsers and devices without needing extra
+layers of abstraction to paper over the gaps left by specification
+editors and implementors.</p>
+
+<h1>
+<a id="running-the-tests" class="anchor" href="#running-the-tests" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Running the Tests</h1>
+
+<p>The tests are designed to be run from your local computer. The test
+environment requires Python 2.7+ (but not Python 3.x). You will also
+need a copy of OpenSSL. Users on Windows should read the
+<a href="#windows-notes">Windows Notes</a> section below.</p>
+
+<p>To get the tests running, you need to set up the test domains in your
+<a href="http://en.wikipedia.org/wiki/Hosts_%28file%29%23Location_in_the_file_system"><code>hosts</code> file</a>. The
+following entries are required:</p>
+
+<pre><code>127.0.0.1   web-platform.test
+127.0.0.1   www.web-platform.test
+127.0.0.1   www1.web-platform.test
+127.0.0.1   www2.web-platform.test
+127.0.0.1   xn--n8j6ds53lwwkrqhv28a.web-platform.test
+127.0.0.1   xn--lve-6lad.web-platform.test
+</code></pre>
+
+<p>Because web-platform-tests uses git submodules, you must ensure that
+these are up to date. In the root of your checkout, run:</p>
+
+<pre><code>git submodule update --init --recursive
+</code></pre>
+
+<p>The test environment can then be started using</p>
+
+<pre><code>./serve
+</code></pre>
+
+<p>This will start HTTP servers on two ports and a websockets server on
+one port. By default one web server starts on port 8000 and the other
+ports are randomly-chosen free ports. Tests must be loaded from the
+<em>first</em> HTTP server in the output. To change the ports, edit the
+<code>config.json</code> file, for example, replacing the part that reads:</p>
+
+<pre><code>"http": [8000, "auto"]
+</code></pre>
+
+<p>to some port of your choice e.g.</p>
+
+<pre><code>"http":[1234, "auto"]
+</code></pre>
+
+<p>If you installed OpenSSL in such a way that running <code>openssl</code> at a
+command line doesn't work, you also need to adjust the path to the
+OpenSSL binary. This can be done by adding a section to <code>config.json</code>
+like:</p>
+
+<pre><code>"ssl": {"openssl": {"binary": "/path/to/openssl"}}
+</code></pre>
+
+<h1>
+<a id="windows-notes" class="anchor" href="#windows-notes" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Windows Notes</h1>
+
+<p>Running wptserve with SSL enabled on Windows typically requires
+installing an OpenSSL distribution.
+<a href="http://slproweb.com/products/Win32OpenSSL.html">Shining Light</a>
+provide a convenient installer that is known to work, but requires a
+little extra setup.</p>
+
+<p>After installation ensure that the path to OpenSSL is on your <code>%Path%</code>
+environment variable.</p>
+
+<p>Then set the path to the default OpenSSL configuration file (usually
+something like <code>C:\OpenSSL-Win32\bin\openssl.cfg</code> in the server
+configuration. To do this copy <code>config.default.json</code> in the
+web-platform-tests root to <code>config.json</code>. Then edit the JSON so that
+the key <code>ssl/openssl/base_conf_path</code> has a value that is the path to
+the OpenSSL config file.</p>
+
+<h1>
+<a id="test-runner" class="anchor" href="#test-runner" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Test Runner</h1>
+
+<p>There is a test runner that is designed to provide a
+convenient way to run the web-platform tests in-browser. It will run
+testharness.js tests automatically but requires manual work for
+reftests and manual tests.</p>
+
+<p>The runner can be found at <code>/tools/runner/index.html</code> on the local
+server i.e.</p>
+
+<pre><code>http://web-platform.test:8000/tools/runner/index.html
+</code></pre>
+
+<p>in the default configuration. The first time you use this it has to
+generate a manifest of all tests. This may take some time, so please
+be patient.</p>
+
+<h1>
+<a id="publication" class="anchor" href="#publication" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Publication</h1>
+
+<p>The master branch is automatically synced to <a href="http://w3c-test.org/">http://w3c-test.org/</a>.</p>
+
+<p>Pull requests that have been checked are automatically mirrored to
+<a href="http://w3c-test.org/submissions/">http://w3c-test.org/submissions/</a>.</p>
+
+<h1>
+<a id="finding-things" class="anchor" href="#finding-things" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Finding Things</h1>
+
+<p>Each top-level directory represents a W3C specification: the name
+matches the shortname used after the canonical address of the said
+specification under <a href="http://www.w3.org/TR/">http://www.w3.org/TR/</a> .</p>
+
+<p>For some of the specifications, the tree under the top-level directory
+represents the sections of the respective documents, using the section
+IDs for directory names, with a maximum of three levels deep.</p>
+
+<p>So if you're looking for tests in HTML for "The History interface",
+they will be under <code>html/browsers/history/the-history-interface/</code>.</p>
+
+<p>Various resources that tests depend on are in <code>common</code>, <code>images</code>, and
+<code>fonts</code>.</p>
+
+<p>If you're looking at a section of the specification and can't figure
+out where the directory is for it in the tree, just run:</p>
+
+<pre><code>node tools/scripts/id2path.js your-id
+</code></pre>
+
+<h1>
+<a id="branches" class="anchor" href="#branches" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Branches</h1>
+
+<p>In the vast majority of cases the <strong>only</strong> upstream branch that you
+should need to care about is <code>master</code>. If you see other branches in
+the repository, you can generally safely ignore them.</p>
+
+<h1>
+<a id="contributing" class="anchor" href="#contributing" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Contributing</h1>
+
+<p>Save the Web, Write Some Tests!</p>
+
+<p>Absolutely everyone is welcome (and even encouraged) to contribute to
+test development, so long as you fulfill the contribution requirements
+detailed in the <a href="https://github.com/w3c/web-platform-tests/blob/master/CONTRIBUTING.md">Contributing Guidelines</a>. No test is
+too small or too simple, especially if it corresponds to something for
+which you've noted an interoperability bug in a browser.</p>
+
+<p>The way to contribute is just as usual:</p>
+
+<ul>
+<li>Fork this repository (and make sure you're still relatively in sync
+with it if you forked a while ago).</li>
+<li>Create a branch for your changes:
+<code>git checkout -b your-name/topic</code>.</li>
+<li>Make your changes.</li>
+<li>Run the lint script described below.</li>
+<li>Commit locally and push that to your repo.</li>
+<li>Send in a pull request based on the above.</li>
+</ul>
+
+<h2>
+<a id="lint-tool" class="anchor" href="#lint-tool" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Lint tool</h2>
+
+<p>We have a lint tool for catching common mistakes in test files. You
+can run it manually by starting the <code>lint</code> executable from the root of
+your local web-platform-tests working directory like this:</p>
+
+<pre><code>./lint
+</code></pre>
+
+<p>The lint tool is also run automatically for every submitted pull
+request, and reviewers will not merge branches with tests that have
+lint errors, so you must fix any errors the lint tool reports. For
+details on doing that, see the <a href="https://github.com/w3c/web-platform-tests/blob/master/docs/lint-tool.md">lint-tool documentation</a>.</p>
+
+<p>But in the unusual case of error reports for things essential to a
+certain test or that for other exceptional reasons shouldn't prevent
+a merge of a test, update and commit the <code>lint.whitelist</code> file in the
+web-platform-tests root directory to suppress the error reports. For
+details on doing that, see the <a href="https://github.com/w3c/web-platform-tests/blob/master/docs/lint-tool.md">lint-tool documentation</a>.</p>
+
+<h2>
+<a id="adding-command-line-scripts-tools-subdirs" class="anchor" href="#adding-command-line-scripts-tools-subdirs" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Adding command-line scripts ("tools" subdirs)</h2>
+
+<p>Sometimes you may want to add a script to the repository that's meant
+to be used from the command line, not from a browser (e.g., a script
+for generating test files). If you want to ensure (e.g., for security
+reasons) that such scripts won't be handled by the HTTP server, but
+will instead only be usable from the command line, then place them in
+either:</p>
+
+<ul>
+<li><p>the <code>tools</code> subdir at the root of the repository, or</p></li>
+<li><p>the <code>tools</code> subdir at the root of any top-level directory in the
+repository which contains the tests the script is meant to be used
+with</p></li>
+</ul>
+
+<p>Any files in those <code>tools</code> directories won't be handled by the HTTP
+server; instead the server will return a 404 if a user navigates to
+the URL for a file within them.</p>
+
+<p>If you want to add a script for use with a particular set of tests but
+there isn't yet any <code>tools</code> subdir at the root of a top-level
+directory in the repository containing those tests, you can create a
+<code>tools</code> subdir at the root of that top-level directory and place your
+scripts there.</p>
+
+<p>For example, if you wanted to add a script for use with tests in the
+<code>notifications</code> directory, create the <code>notifications/tools</code> subdir and
+put your script there.</p>
+
+<h1>
+<a id="test-review" class="anchor" href="#test-review" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Test Review</h1>
+
+<p>We can sometimes take a little while to go through pull requests
+because we have to go through all the tests and ensure that they match
+the specification correctly. But we look at all of them, and take
+everything that we can.</p>
+
+<h1>
+<a id="getting-involved" class="anchor" href="#getting-involved" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Getting Involved</h1>
+
+<p>If you wish to contribute actively, you're very welcome to join the
+<a href="mailto:public-test-infra@w3.org">public-test-infra@w3.org</a> mailing list (low traffic) by
+<a href="mailto:public-test-infra-request@w3.org?subject=subscribe">signing up to our mailing list</a>.
+The mailing list is <a href="http://lists.w3.org/Archives/Public/public-test-infra/">archived</a>.</p>
+
+<p>Join us on irc #testing (<a href="https://www.w3.org/wiki/IRC">irc.w3.org</a>, port 6665). The channel
+is <a href="http://krijnhoetmer.nl/irc-logs/testing/">archived</a>.</p>
+
+<h1>
+<a id="documentation" class="anchor" href="#documentation" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Documentation</h1>
+
+<ul>
+<li><a href="http://testthewebforward.org/docs/">How to write and review tests</a></li>
+<li><a href="http://wptserve.readthedocs.org/en/latest/">Documentation for the wptserve server</a></li>
+</ul>
+
+      <footer class="site-footer">
+        <span class="site-footer-owner"><a href="https://github.com/YOTOV-LIMITED/web-platform-tests">Web-platform-tests</a> is maintained by <a href="https://github.com/YOTOV-LIMITED">YOTOV-LIMITED</a>.</span>
+
+        <span class="site-footer-credits">This page was generated by <a href="https://pages.github.com">GitHub Pages</a> using the <a href="https://github.com/jasonlong/cayman-theme">Cayman theme</a> by <a href="https://twitter.com/jasonlong">Jason Long</a>.</span>
+      </footer>
+
+    </section>
+
+  
+  </body>
+</html>
